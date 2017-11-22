@@ -1,6 +1,7 @@
 package com.ceduliocezar.zegauge;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -14,6 +15,7 @@ import android.graphics.Shader;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -28,24 +30,29 @@ public class ZeGaugeView extends View {
     private double arrowAngle = -90;
     private Paint arrowPaint;
     private Paint textPaint;
-    private int textSizeInSp = 20;
+    private float textSizeInSp = 12;
+    private int textColor;
+    private float textFocusedSizeInSp = 16;
+    private int textFocusedColor;
+
 
     public ZeGaugeView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        init();
+        init(context, attrs);
     }
 
     public ZeGaugeView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
+
+
+        init(context, attrs);
     }
 
-    private void init() {
+    private void init(Context context, @Nullable AttributeSet attrs) {
+
+        initAttributes(context, attrs);
 
         textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        textPaint.setColor(Color.WHITE);
-        textPaint.setTextSize(Unit.convertSpToPixels(textSizeInSp, getContext()));
-
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setColor(Color.WHITE);
         paint.setTextSize(Unit.convertSpToPixels(10, getContext()));
@@ -59,6 +66,14 @@ public class ZeGaugeView extends View {
         paintBackGround.setStyle(Paint.Style.STROKE);
         paintBackGround.setColor(Color.WHITE);
         paintBackGround.setStrokeWidth(Unit.convertDpToPixels(5, getContext()));
+    }
+
+    private void initAttributes(Context context, @Nullable AttributeSet attrs) {
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ZeGaugeView);
+        textSizeInSp = typedArray.getDimension(R.styleable.ZeGaugeView_textSize, 15 * getResources().getDisplayMetrics().scaledDensity);
+        textColor = typedArray.getColor(R.styleable.ZeGaugeView_textColor, Color.WHITE);
+        textFocusedSizeInSp = typedArray.getDimension(R.styleable.ZeGaugeView_textFocusedSize, 18 * getResources().getDisplayMetrics().scaledDensity);
+        textFocusedColor = typedArray.getColor(R.styleable.ZeGaugeView_textFocusedColor, Color.LTGRAY);
     }
 
 
@@ -186,7 +201,7 @@ public class ZeGaugeView extends View {
         String text = String.valueOf(textAngle);
         float difference = (float) abs(textAngle - this.arrowAngle);
         if (difference < TEXT_INCREASE_RANGE) {
-            drawBiggerText(difference);
+            drawFocusedText(difference);
         } else {
             drawNormalText();
         }
@@ -201,14 +216,14 @@ public class ZeGaugeView extends View {
     }
 
     private void drawNormalText() {
-        textPaint.setTextSize(Unit.convertSpToPixels(textSizeInSp, getContext()));
-        textPaint.setColor(Color.LTGRAY);
+        textPaint.setTextSize(textSizeInSp);
+        textPaint.setColor(textColor);
     }
 
-    private void drawBiggerText(float difference) {
-        float sizeToIncrease = 1 + ((TEXT_INCREASE_RANGE - difference) / TEXT_INCREASE_RANGE * 0.5f);
-        textPaint.setTextSize(Unit.convertSpToPixels(textSizeInSp * sizeToIncrease, getContext()));
-        textPaint.setColor(Color.WHITE);
+    private void drawFocusedText(float difference) {
+        float sizeToIncrease = ((TEXT_INCREASE_RANGE - difference) / TEXT_INCREASE_RANGE) * (textFocusedSizeInSp - textSizeInSp);
+        textPaint.setTextSize(textSizeInSp + sizeToIncrease);
+        textPaint.setColor(textFocusedColor);
     }
 
     private Bitmap makeRadialGradient() {
@@ -269,6 +284,7 @@ public class ZeGaugeView extends View {
         int right = left + viewDiameter;
         int bottom = top + viewDiameter;
 
+
         return new RectF(left, top, right, bottom);
     }
 
@@ -306,7 +322,7 @@ public class ZeGaugeView extends View {
 
         float x = event.getX();
         float y = event.getY();
-      
+
         if (!isTouchInsideGauge(x, y)) {
             return true;
         }
@@ -324,7 +340,7 @@ public class ZeGaugeView extends View {
 
         invalidate();
     }
-  
+
     private boolean isTouchInsideGauge(float x, float y) {
         return Math.pow(x - getCenterX(), 2) + Math.pow(y - getCenterY(), 2) < Math.pow(getViewRadius(), 2);
     }

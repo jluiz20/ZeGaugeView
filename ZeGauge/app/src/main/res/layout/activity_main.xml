@@ -16,7 +16,11 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.0"
+        app:textColor="@color/colorAccent"
+        app:textFocusedColor="@color/colorPrimary"
+        app:textFocusedSize="26sp"
+        app:textSize="18sp" />
 
     <SeekBar
         android:id="@+id/seekBar"

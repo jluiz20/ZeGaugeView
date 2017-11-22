@@ -8,4 +8,11 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+
+    <declare-styleable name="ZeGaugeView">
+        <attr name="textSize" format="dimension" />
+        <attr name="textColor" format="color" />
+        <attr name="textFocusedSize" format="dimension" />
+        <attr name="textFocusedColor" format="color" />
+    </declare-styleable>
 </resources>
