@@ -318,18 +318,16 @@ public class ZeGaugeView extends View {
         return true;
     }
 
-    private boolean isTouchInsideGauge(float x, float y) {
-
-        return Math.pow(x - getCenterX(), 2) + Math.pow(y - getCenterY(), 2) < Math.pow(getViewRadius(), 2);
-
-
-    }
-
     public void setArrowAngle(double arrowAngle) {
         this.arrowAngle = -360 + arrowAngle;
         Log.d(TAG, "Angle set:" + arrowAngle);
         invalidate();
     }
+
+    private boolean isTouchInsideGauge(float x, float y) {
+        return Math.pow(x - getCenterX(), 2) + Math.pow(y - getCenterY(), 2) < Math.pow(getViewRadius(), 2);
+    }
+
 }
 
 
