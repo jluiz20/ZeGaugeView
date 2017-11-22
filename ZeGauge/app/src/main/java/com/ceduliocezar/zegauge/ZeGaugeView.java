@@ -269,6 +269,7 @@ public class ZeGaugeView extends View {
         int right = left + viewDiameter;
         int bottom = top + viewDiameter;
 
+
         return new RectF(left, top, right, bottom);
     }
 
